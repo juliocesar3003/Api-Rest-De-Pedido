@@ -13,6 +13,8 @@ import com.stark.curso.repositories.UserRepository;
 import com.stark.curso.services.exception.DataBaseException;
 import com.stark.curso.services.exception.ResourceNotFoundException;
 
+import jakarta.persistence.EntityNotFoundException;
+
 @Service
 public class UserServices {
 
@@ -45,10 +47,15 @@ public class UserServices {
 	}
 	
 	public Usuario update(Long id, Usuario obj) {
+	 try {	
 		Usuario entidade = repository.getReferenceById(id);
 		updateData(entidade,obj);
 		return repository.save(entidade);
+	 }
+	catch(EntityNotFoundException e) {
+		throw new ResourceNotFoundException(id);
 	}
+	} 
 
 	private void updateData(Usuario entidade, Usuario obj) {
 		entidade.setNome(obj.getNome());
